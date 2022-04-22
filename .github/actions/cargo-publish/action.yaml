@@ -1,0 +1,21 @@
+name: Cargo Publish
+description: Publish package to crates.io
+inputs:
+  package:
+    description: Which package to publish
+    required: true
+runs:
+  using: composite
+  steps:
+    - uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+        # cargo is enough
+        profile: minimal
+    - name: Setup local credential
+      run: cargo login ${CRATES_IO_TOKEN}
+      shell: bash
+    - name: Publish package
+      run: cargo publish --package ${{ inputs.package }}
+      shell: bash
+
