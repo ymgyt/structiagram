@@ -22,21 +22,19 @@ impl Parser {
             entry.file_type().is_file() && entry.path().extension() == Some(OsStr::new("rs"))
         }
 
-        let r: Result<Vec<Ast>, Error> = WalkDir::new(root_dir.as_ref().as_std_path())
+        WalkDir::new(root_dir.as_ref().as_std_path())
             .into_iter()
-            .filter_map(|result| match result {
-                Ok(ref entry) if is_rust_file(entry) => Some(result),
-                Ok(_) => None,
-                Err(_) => Some(result),
+            .filter(|result| match result {
+                Ok(ref entry) if is_rust_file(entry) => true,
+                Ok(_) => false,
+                Err(_) => true,
             })
             .try_fold(Vec::new(), |mut acc, entry| {
                 let entry = entry?;
                 // TODO: Handle convert error.
                 acc.extend(self.parse_file(Utf8Path::from_path(entry.path()).unwrap())?);
                 Ok(acc)
-            });
-
-        r
+            })
     }
 
     fn parse_file(&self, path: &Utf8Path) -> Result<impl Iterator<Item = Ast>, Error> {
@@ -71,7 +69,7 @@ impl Parser {
         let ignore_suffixes = &["Input", "Output", "OutputItem", "Options", "Item", "Item2"];
 
         ignore_suffixes
-            .into_iter()
+            .iter()
             .all(|suffix| !ident.ends_with(suffix))
     }
 }

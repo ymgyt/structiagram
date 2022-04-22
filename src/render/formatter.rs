@@ -46,10 +46,10 @@ impl<'a> fmt::Display for TypeFormatter<'a> {
                                 "{}",
                                 quote!(#seg)
                                     .to_string()
-                                    .replace(" ", "")
+                                    .replace(' ', "")
                                     .replace("::", "_")
-                                    .replace("<", "_")
-                                    .replace(">", "")
+                                    .replace('<', "_")
+                                    .replace('>', "")
                             )
                         }
                     })

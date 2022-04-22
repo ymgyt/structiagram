@@ -29,10 +29,10 @@ impl Graph {
             acc
         });
 
-        let mut edges = Vec::new();
-        for (_, item) in &scope {
+        let edges = scope.values().fold(Vec::new(), |mut edges, item| {
             edges.extend(Graph::find_edges(item, &scope));
-        }
+            edges
+        });
 
         Ok(Graph {
             edges,
@@ -49,11 +49,12 @@ impl Graph {
             .fold(Vec::new(), |mut acc, field| {
                 // Ignore self relation.
                 if let Some(ident) = &field.ident {
-                    if ident.to_string() == "id" {
+                    if *ident == "id" {
                         return acc;
                     }
                 }
                 // Construct userId: models::UserId => (ast -> User) edge.
+                #[allow(clippy::single_match)]
                 match field.ty {
                     syn::Type::Path(ref type_path) => {
                         if let Some(last_seg) = type_path.path.segments.last() {
