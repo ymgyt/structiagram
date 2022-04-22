@@ -1,4 +1,5 @@
 use camino::Utf8PathBuf;
+use std::fs::File;
 
 use crate::errors::Error;
 use crate::graph::Graph;
@@ -41,7 +42,9 @@ impl StructiagramApp {
 
         let graph = Graph::from_asts(asts)?;
 
-        self.render.render(&graph)?;
+        // // TODO: Pass from cli flags.
+        let mut out = File::create("./structiagram.md").unwrap();
+        self.render.render(&mut out, &graph)?;
 
         Ok(())
     }

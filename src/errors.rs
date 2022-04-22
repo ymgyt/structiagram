@@ -1,16 +1,15 @@
 use camino::Utf8PathBuf;
-use std::io;
 use std::fmt::{self, Formatter};
+use std::io;
 
 #[derive(Debug)]
 pub enum Error {
     /// Failed to walk directory.
     DirWalkError(walkdir::Error),
     /// Failed to open rust file.
-    OpenRustFile{
-        path: Utf8PathBuf,
-        err: io::Error,
-    }
+    OpenRustFile { path: Utf8PathBuf, err: io::Error },
+    /// Failed to render
+    RenderError { err: io::Error },
 }
 
 impl fmt::Display for Error {
@@ -19,7 +18,8 @@ impl fmt::Display for Error {
         match self {
             // TODO: more specific diagnose error by using error api.(path, io_error,...)
             DirWalkError(err) => write!(f, "dirwalk: {err}"),
-            OpenRustFile {path, err} => write!(f, "path: {path} {err}"),
+            OpenRustFile { path, err } => write!(f, "path: {path} {err}"),
+            RenderError { err } => write!(f, "render: {err}"),
         }
     }
 }
@@ -34,6 +34,13 @@ impl From<walkdir::Error> for Error {
 
 impl Error {
     pub fn open_rust_file(path: impl Into<Utf8PathBuf>, err: io::Error) -> Self {
-        Error::OpenRustFile { path: path.into(), err }
+        Error::OpenRustFile {
+            path: path.into(),
+            err,
+        }
+    }
+
+    pub fn render(err: io::Error) -> Self {
+        Error::RenderError { err }
     }
 }

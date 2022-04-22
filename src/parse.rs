@@ -55,8 +55,23 @@ impl Parser {
 
         // TODO: check attribute like #[diagram]
         Ok(ast.items.into_iter().filter_map(|item| match item {
-            syn::Item::Struct(item) => Some(Ast::Struct(item)),
+            syn::Item::Struct(item) => {
+                if Parser::is_target_struct(item.ident.to_string().as_str()) {
+                    Some(Ast::Struct(item))
+                } else {
+                    None
+                }
+            }
             _ => None,
         }))
+    }
+
+    fn is_target_struct(ident: &str) -> bool {
+        // TODO: Pass from cli flags
+        let ignore_suffixes = &["Input", "Output", "OutputItem", "Options", "Item", "Item2"];
+
+        ignore_suffixes
+            .into_iter()
+            .all(|suffix| !ident.ends_with(suffix))
     }
 }
