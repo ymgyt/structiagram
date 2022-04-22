@@ -1,0 +1,53 @@
+[tasks.lint]
+description = "Apply lint"
+command = "cargo"
+args = ["clippy", "--all-features", "--all-targets", "--", "--deny", "warnings"]
+dependencies = [
+    "fmt-check", "sort-check",
+    "outdated-check",
+]
+
+[tasks.fmt-check]
+description = "Check format"
+command = "cargo"
+args = ["fmt", "--check"]
+
+[tasks.sort-check]
+description = "Check if Cargo.toml dependencies sorted"
+install_crate = { crate_name = "cargo-sort" }
+command = "cargo"
+args = ["sort", "--workspace", "--check"]
+
+[tasks.outdated-check]
+description = "Check to see if the dependencies are up-to-date"
+install_crate = { crate_name = "cargo-outdated" }
+command = "cargo"
+args = [
+    "outdated", "--exit-code", "1",
+]
+
+[tasks.sort]
+description = "sort Cargo.toml dependencies"
+install_crate = { crate_name = "cargo-sort" }
+command = "cargo"
+args = ["sort", "--workspace"]
+
+[tasks.bench]
+description = "Run benchmarks"
+install_crate = { crate_name = "cargo-criterion" }
+command = "cargo"
+args = ["criterion"]
+
+[tasks.benchmark]
+alias = "bench"
+
+[tasks.test]
+description = "Run nextest"
+install_crate = { crate_name = "cargo-nextest" }
+command = "cargo"
+args = ["nextest", "run"]
+
+[tasks.install-tools]
+description = "Install tools"
+command = "cargo"
+args = ["install", "cargo-nextest", "cargo-criterion", "cargo-sort"]

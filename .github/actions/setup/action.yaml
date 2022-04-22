@@ -1,0 +1,10 @@
+name: Setup runner
+description: Setup runner
+runs:
+  using: composite
+  steps:
+    - uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+        components: rustfmt, clippy
+    - uses: ./.github/actions/cache-cargo
