@@ -41,7 +41,7 @@ impl StructiagramOptions {
         let output: Box<dyn Write> = match output.as_ref().map(|path| path.as_str()) {
             Some("-") | None => Box::new(io::stdout()),
             Some(path) => {
-                Box::new(File::open(path).map_err(|err| Error::open_output_file(path, err))?)
+                Box::new(File::create(path).map_err(|err| Error::open_output_file(path, err))?)
             }
         };
         Ok(output)
