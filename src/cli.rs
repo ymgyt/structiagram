@@ -1,5 +1,6 @@
 use camino::Utf8PathBuf;
 use std::fs::File;
+use std::io::{self, Write};
 
 use crate::errors::Error;
 use crate::graph::Graph;
@@ -12,6 +13,11 @@ pub struct StructiagramOptions {
     /// Root directory to parse files.
     #[clap(long)]
     pub dir: Utf8PathBuf,
+
+    /// Output file. default stdout.
+    /// The '-' is interpreted as stdout.
+    #[clap(long, short = 'o')]
+    pub output: Option<Utf8PathBuf>,
 }
 
 impl StructiagramOptions {
@@ -26,7 +32,19 @@ impl StructiagramOptions {
             render: Render::new(),
         };
 
-        app.run()
+        let mut output = StructiagramOptions::new_output(&self.output).unwrap();
+
+        app.run(&mut output)
+    }
+
+    fn new_output(output: &Option<Utf8PathBuf>) -> Result<Box<dyn Write>, Error> {
+        let output: Box<dyn Write> = match output.as_ref().map(|path| path.as_str()) {
+            Some("-") | None => Box::new(io::stdout()),
+            Some(path) => {
+                Box::new(File::open(path).map_err(|err| Error::open_output_file(path, err))?)
+            }
+        };
+        Ok(output)
     }
 }
 
@@ -37,14 +55,12 @@ struct StructiagramApp {
 }
 
 impl StructiagramApp {
-    fn run(self) -> Result<(), Error> {
+    fn run(self, writer: &mut dyn Write) -> Result<(), Error> {
         let asts = self.parser.parse_files(self.root_dir.as_path())?;
 
         let graph = Graph::from_asts(asts)?;
 
-        // // TODO: Pass from cli flags.
-        let mut out = File::create("./structiagram.md").unwrap();
-        self.render.render(&mut out, &graph)?;
+        self.render.render(writer, &graph)?;
 
         Ok(())
     }
