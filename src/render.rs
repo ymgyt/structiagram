@@ -44,7 +44,10 @@ impl Render {
         mut writer: impl Write,
         graph: &Graph,
     ) -> Result<(), io::Error> {
-        for (ident, item_struct) in &graph.nodes {
+        let mut nodes: Vec<(&String, &syn::ItemStruct)> = graph.nodes.iter().collect();
+        nodes.sort_by(|(a, _), (b, _)| a.cmp(b));
+
+        for (ident, item_struct) in nodes {
             writeln!(writer, "{ident} {{")?;
 
             for field in &item_struct.fields {
@@ -68,7 +71,16 @@ impl Render {
         mut writer: impl Write,
         graph: &Graph,
     ) -> Result<(), io::Error> {
-        for edge in &graph.edges {
+        let mut edges: Vec<_> = graph.edges.iter().collect();
+        edges.sort_by(|a, b| {
+            if a.from == b.from {
+                a.to.cmp(&b.to)
+            } else {
+                a.from.cmp(&b.from)
+            }
+        });
+
+        for edge in edges {
             writeln!(writer, "{} ||--|| {} : {}", edge.from, edge.to, edge.label)?;
         }
 
