@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - sorting structs alphabetically when rendering
 
 ## [0.1.1] - 2021-04-23
-### Fixed: バグフィックス
+### Fixed
 - create output file if it does not exist
 
 ## [0.1.0] - 2021-04-22
