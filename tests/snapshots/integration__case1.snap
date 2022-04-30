@@ -1,0 +1,25 @@
+---
+source: tests/integration.rs
+expression: "&String::from_utf8_lossy(bin.assert().success().get_output().stdout.as_slice())"
+---
+# Structiagram
+
+```mermaid
+%%{init: {
+            "er": {
+                "layoutDirection": "LR",
+                "entityPadding": 15,
+                "useMaxWidth": false
+            }
+        }}%%
+erDiagram
+A {
+    String field_1
+    BId b_id
+}
+B {
+    Option_String field_1
+}
+A ||--|| B : b_id
+```
+
