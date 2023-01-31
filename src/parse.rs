@@ -5,6 +5,7 @@ use std::fs::File;
 use std::io::Read;
 use walkdir::{DirEntry, WalkDir};
 
+#[derive(Debug)]
 pub enum Ast {
     Struct(syn::ItemStruct),
 }

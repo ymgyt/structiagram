@@ -50,14 +50,17 @@ impl Render {
         for (ident, item_struct) in nodes {
             writeln!(writer, "{ident} {{")?;
 
-            for field in &item_struct.fields {
-                // TODO: render field type.
-                writeln!(
-                    writer,
-                    "    {} {}",
-                    TypeFormatter::new(&field.ty),
-                    IdentFormatter::from(field.ident.as_ref()),
-                )?;
+            // Skip unnamed fields.
+            // https://github.com/ymgyt/structiagram/issues/3
+            if let syn::Fields::Named(_) = &item_struct.fields {
+                for field in &item_struct.fields {
+                    writeln!(
+                        writer,
+                        "    {} {}",
+                        TypeFormatter::new(&field.ty),
+                        IdentFormatter::from(field.ident.as_ref()),
+                    )?;
+                }
             }
 
             writeln!(writer, "}}")?;
