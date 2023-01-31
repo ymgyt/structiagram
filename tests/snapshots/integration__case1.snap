@@ -20,6 +20,8 @@ A {
 B {
     Option_String field_1
 }
+Tuple {
+}
 A ||--|| B : b_id
 ```
 
