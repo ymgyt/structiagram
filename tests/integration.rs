@@ -6,7 +6,7 @@ fn case1() {
 
     let mut path = fixtures();
     path.push("case1");
-    bin.args(&["--dir", path.display().to_string().as_str()]);
+    bin.args(["--dir", path.display().to_string().as_str()]);
 
     insta::assert_snapshot!(&String::from_utf8_lossy(
         bin.assert().success().get_output().stdout.as_slice(),
