@@ -4,7 +4,6 @@ command = "cargo"
 args = ["clippy", "--all-features", "--all-targets", "--", "--deny", "warnings"]
 dependencies = [
     "fmt-check", "sort-check",
-    "outdated-check",
 ]
 
 [tasks.fmt-check]
